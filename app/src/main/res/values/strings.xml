@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Jumping-Sumo-Tracking-PST</string>
+    <string name="loading_waiting_drone_connexion">Waiting for drone connexion.</string>
+    <string name="drone_connected">Drone \'%s\' connected.</string>
+</resources>
