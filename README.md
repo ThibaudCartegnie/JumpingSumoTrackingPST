@@ -16,7 +16,7 @@ Built with Android Studio 3.0.
 
 ## Adding new features
 
-Add features in the `Detector` package.
+Add features in the `Detector` package
 
 ## Libs
 
