@@ -4,7 +4,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import imt.pst.jumping_sumo_tracking_pst.detectors.CircleDetector;
 import imt.pst.jumping_sumo_tracking_pst.detectors.Detector;
+import imt.pst.jumping_sumo_tracking_pst.detectors.LineDetector;
 import imt.pst.jumping_sumo_tracking_pst.detectors.ObstacleDetector;
 
 /**
@@ -14,12 +16,14 @@ import imt.pst.jumping_sumo_tracking_pst.detectors.ObstacleDetector;
 public enum TrackingModes {
     MANUAL(0, "Manual Mode", true),
     CIRCLE_TRACKING(1, "Tracking Circle mode", false),
-    OBSTACLE_DETECTION(2, "Detection of obstacles", true);
+    OBSTACLE_DETECTION(2, "Detection of obstacles", true),
+    LINE_DETECTION(3, "Line Detection", false);
 
     private static void modesSetup(){
         MANUAL.config.add(null);
-        //CIRCLE_TRACKING.config.add(new CircleDetector());
+        CIRCLE_TRACKING.config.add(new CircleDetector());
         OBSTACLE_DETECTION.config.add(new ObstacleDetector());
+        LINE_DETECTION.config.add(new LineDetector());
     }
 
     static{

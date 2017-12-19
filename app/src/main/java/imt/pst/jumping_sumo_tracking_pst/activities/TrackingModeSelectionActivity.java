@@ -126,6 +126,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
 
     private void checkDroneConnexion(){
         if(mDronesList.size() == 0 && isDroneConnected){
+            isDroneConnected = false;
             droneDisconnected();
         } else if (mDronesList.size() != 0){
             isDroneConnected = true;

@@ -22,6 +22,7 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 import imt.pst.jumping_sumo_tracking_pst.R;
 import imt.pst.jumping_sumo_tracking_pst.TrackingModes;
 import imt.pst.jumping_sumo_tracking_pst.detectors.Detector;
+import imt.pst.jumping_sumo_tracking_pst.detectors.ObstacleDetector;
 import imt.pst.jumping_sumo_tracking_pst.drone.JumpingSumo;
 import imt.pst.jumping_sumo_tracking_pst.views.FrameByFrameImageView;
 
@@ -59,6 +60,12 @@ public class DroneControlActivity extends AppCompatActivity {
             activateCommands();
         } else {
             deactivateCommands();
+        }
+
+        for(Detector d : config.getConfig()){
+            if(d!= null){
+                d.setDrone(mDrone);
+            }
         }
     }
 

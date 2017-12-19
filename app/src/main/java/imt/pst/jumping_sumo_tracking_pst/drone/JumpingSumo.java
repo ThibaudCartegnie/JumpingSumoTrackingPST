@@ -37,6 +37,14 @@ import java.util.List;
  */
 
 public class JumpingSumo {
+
+    public static final byte FLAG_RUN = (byte)1;
+    public static final byte FLAG_DO_NOT_RUN = (byte)0;
+    public static final byte LONG_JUMP = (byte)2;
+    public static final byte HIGH_JUMP = (byte)1;
+    public static final byte NO_JUMP = (byte)0;
+
+
     private static final String TAG = "JSDrone";
 
     private static final int DEVICE_PORT = 21;

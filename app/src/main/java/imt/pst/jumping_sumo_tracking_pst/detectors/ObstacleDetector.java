@@ -4,6 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.parrot.arsdk.arcommands.ARCOMMANDS_JUMPINGSUMO_MEDIARECORDEVENT_PICTUREEVENTCHANGED_ERROR_ENUM;
+import com.parrot.arsdk.arcontroller.ARCONTROLLER_DEVICE_STATE_ENUM;
+import com.parrot.arsdk.arcontroller.ARControllerCodec;
+import com.parrot.arsdk.arcontroller.ARFrame;
+import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
+
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -29,6 +35,10 @@ public class ObstacleDetector implements Detector {
     private Mat distance;
     private Mat mObstacleCircle;
     private int nb_tot_white;
+
+    private float THRESHHOLD_OBSTACLE_DETECTION = 0.4f;
+
+    private JumpingSumo mDrone = null;
 
     private String TAG = "OBSTACLES";
 
@@ -70,11 +80,12 @@ public class ObstacleDetector implements Detector {
 
         Core.bitwise_and(mGray_2, mObstacleCircle, mGray_1);
         int nb_px_obstacle = Core.countNonZero(mGray_1);
-        float ratio[] = new float[3];
-        ratio[0] = 100*((float)nb_px_obstacle/(float)(nb_tot_white==0? 1:nb_tot_white));
+        float ratio = 100*((float)nb_px_obstacle/(float)(nb_tot_white==0? 1:nb_tot_white));
         Log.d(TAG, "nb px blanc tot: " + nb_tot_white + "; nb px comptés: " + nb_px_obstacle);
-        Log.d(TAG, "ratio : " + ratio[0] +"%");
+        Log.d(TAG, "ratio : " + ratio +"%");
 
+
+        avoid(ratio);
 
 
         //affichage des arrêtes
@@ -92,4 +103,32 @@ public class ObstacleDetector implements Detector {
 
         return out;
     }
+
+    private double lastAvoid = 0.0d;
+    private boolean flagOn = false;
+    private void avoid(float ratio) {
+        if(mDrone == null){
+            return;
+        }
+
+        if(ratio > THRESHHOLD_OBSTACLE_DETECTION && System.currentTimeMillis() - lastAvoid > 3000.0d){
+            Log.v(TAG, "Obstacle detected");
+            mDrone.setJump(JumpingSumo.LONG_JUMP);
+            mDrone.setFlag(JumpingSumo.FLAG_RUN);
+
+            flagOn = true;
+            lastAvoid = System.currentTimeMillis();
+        } else if(flagOn){
+                mDrone.setJump(JumpingSumo.NO_JUMP);
+                mDrone.setFlag(JumpingSumo.FLAG_DO_NOT_RUN);
+                flagOn = false;
+        }
+    }
+
+    @Override
+    public void setDrone(JumpingSumo drone){
+        this.mDrone = drone;
+    }
+
+
 }
