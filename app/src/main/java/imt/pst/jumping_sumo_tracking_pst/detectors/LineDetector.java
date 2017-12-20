@@ -24,6 +24,7 @@ public class LineDetector implements Detector{
     private JumpingSumo mJSDrone;
     private final String TAG = "RecogPath";
     private double theta = 0;
+    private Mat mThresholded2;
 
     public LineDetector(){
         this(640,480);
@@ -36,7 +37,8 @@ public class LineDetector implements Detector{
         mEdges = new Mat(height, width, CvType.CV_8UC4);
         array255 = new Mat(height, width, CvType.CV_8UC1);
         distance = new Mat(height, width, CvType.CV_8UC1);
-        mThresholded = new Mat(height, width, CvType.CV_8UC4);
+        mThresholded = new Mat(height, width, CvType.CV_8UC1);
+        mThresholded2 = new Mat(height, width, CvType.CV_8UC1);
         template = new Mat(height,width,CvType.CV_8UC4); //draws a line to match the path to follow
         a = new Point(width/2,2*height/3);
         b = new Point(width/2, height);
@@ -54,22 +56,27 @@ public class LineDetector implements Detector{
     public Bitmap detect(Bitmap bmp, byte[] out) {
         Mat lines = new Mat();
         Bitmap outBmp = bmp.copy(bmp.getConfig(),bmp.isMutable());
+
         Utils.bitmapToMat(bmp, mRgb);
-        float width_tolerance = 50.0f, height_tolerance = 240.0f;
-
+        float width_tolerance = 80.0f, height_tolerance = 260.0f;
+        float width=640, height=480, a=height*3/4;
+        //Core.inRange(mRgb,new Scalar(0,0,0), new Scalar(20,20,20), mThresholded2);
         Imgproc.cvtColor(mRgb, mGray, Imgproc.COLOR_RGB2GRAY, 4);
-        Imgproc.bilateralFilter(mRgb,mThresholded,9,200,200);
+        Imgproc.bilateralFilter(mGray,mThresholded,9,200,200);
 
-        Imgproc.Canny(mThresholded,mThresholded,80,100);
 
-        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 80, 0, 10);//Finds lines in a gray scale
+        //double high_thresh = Imgproc.threshold(mThresholded, distance,0,255,Imgproc.THRESH_OTSU);
+        //double low_thresh = 0.2 * high_thresh;
+        //Log.d(TAG, "high_thresh: " + high_thresh);
+        Imgproc.Canny(mThresholded,mThresholded,50,150);
+
+        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 10, 0, 10);//Finds lines in a gray scale
         //Imgproc.HoughLines(mThresholded, lines, 1, Math.PI /180,200);
 
         theta = .0f;
         int nb = 0;
-        for (int i=0;i<lines.cols();i++){
-
-            double [] vec = lines.get(0,i);
+        for (int i=0;i<lines.rows();i++){
+            double [] vec = lines.get(i,0);
 
             if(vec == null){
                 break;
@@ -82,39 +89,46 @@ public class LineDetector implements Detector{
             p1=new Point(vec[0],vec[1]);
             p2=new Point(vec[2],vec[3]);
             Point P = new Point(p2.x - p1.x, p2.y - p1.y);
-            if ((a.x-width_tolerance< p1.x)&&(p1.x < a.x+width_tolerance)&&(a.x-width_tolerance < p2.x)&&(p2.x < a.x+width_tolerance)
-                    &&(p2.y>a.y-height_tolerance)&&(p1.y>a.y-height_tolerance)) {
-                //theta = Math.toDegrees(Math.acos((AB.x * P.x + AB.y * P.y) / (Math.sqrt(AB.x * AB.x + AB.y * AB.y) * Math.sqrt(P.x * P.x + P.y * P.y))));
+            //if ((a.x-width_tolerance< p1.x)&&(p1.x < a.x+width_tolerance)&&(a.x-width_tolerance < p2.x)&&(p2.x < a.x+width_tolerance)
+            //        &&(p2.y>a.y-height_tolerance)&&(p1.y>a.y-height_tolerance)) {
+
+            if(     (p1.x <= width/2 && p1.y >= 2*(a-height)*p1.x/width + height)
+                    || (p1.x > width/2 && p1.y >= 2*(height-a)*p1.x/width + 2*a - height)
+
+                    && (p2.x <= width/2 && p2.y >= 2*(a-height)*p2.x/width + height)
+                    || (p2.x > width/2 && p2.y >= 2*(height-a)*p2.x/width + 2*a - height))
+            {
+
                 theta += Math.toDegrees(Math.atan2(P.y, P.x) - Math.atan2(AB.y, AB.x));
                 nb++;
                 Log.d(TAG, "theta :" + theta);
             }
-
-            Imgproc.line(mRgb,p1,p2,new Scalar(0,0,255),3,Core.LINE_AA,0);
+            //Log.v(TAG, "i: "+ i+ "size:" + lines.size().height + ", w:"+lines.size().width+", cols: "+lines.cols() + ", rows: "+lines.rows());
+            Imgproc.line(mRgb,p1,p2,new Scalar(0,0,255),1,Core.LINE_AA,0);
         }
 
         theta = nb == 0? Float.NaN : theta/nb;
 
         if(25 < theta && theta <= 180) {
             Log.d(TAG,"turned -5");
-            mJSDrone.setSpeed((byte) 0);
-            mJSDrone.setTurn((byte) -5);
-            mJSDrone.setFlag((byte) 1);
-        } else if (-25 > theta && theta <= 180){
+            mJSDrone.setSpeed(JumpingSumo.NULL_SPEED);
+            mJSDrone.setTurn((byte) (5*JumpingSumo.RIGHT_TURN));
+            mJSDrone.setFlag(JumpingSumo.FLAG_RUN);
+        } else if (-25 > theta && theta >= -180){
             Log.d(TAG, "turned 5");
-            mJSDrone.setSpeed((byte) 0);
-            mJSDrone.setTurn((byte) 5);
-            mJSDrone.setFlag((byte) 1);
+            mJSDrone.setSpeed(JumpingSumo.NULL_SPEED);
+            mJSDrone.setTurn((byte) (5*JumpingSumo.LEFT_TURN));
+            mJSDrone.setFlag(JumpingSumo.FLAG_RUN);
         } else if ((-25<=theta)&&(theta<=25)){
             Log.d(TAG, "go front");
-            mJSDrone.setSpeed((byte) 25);
-            mJSDrone.setTurn((byte) 0);
-            mJSDrone.setFlag((byte) 1);
+            mJSDrone.setSpeed((byte) (25*JumpingSumo.FORWARD_SPEED));
+            mJSDrone.setTurn(JumpingSumo.NO_TURN);
+            mJSDrone.setFlag(JumpingSumo.FLAG_RUN);
         } else {
             Log.d(TAG, "do nothing");
-            mJSDrone.setSpeed((byte) 0);
-            mJSDrone.setTurn((byte) 0);
-            mJSDrone.setFlag((byte) 0);
+            mJSDrone.setSpeed(JumpingSumo.NULL_SPEED);
+            mJSDrone.setTurn(JumpingSumo.NO_TURN);
+            mJSDrone.setFlag(JumpingSumo.FLAG_DO_NOT_RUN);
         }
 
         Imgproc.line(template,new Point(320,height_tolerance),b,new Scalar(255),(int)(2*width_tolerance),8,0);
