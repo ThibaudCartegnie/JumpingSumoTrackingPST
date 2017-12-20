@@ -8,6 +8,7 @@ import imt.pst.jumping_sumo_tracking_pst.detectors.CircleDetector;
 import imt.pst.jumping_sumo_tracking_pst.detectors.Detector;
 import imt.pst.jumping_sumo_tracking_pst.detectors.LineDetector;
 import imt.pst.jumping_sumo_tracking_pst.detectors.ObstacleDetector;
+import imt.pst.jumping_sumo_tracking_pst.detectors.YetAnotherLineDetector;
 
 /**
  * Created by Natu on 14/12/2017.
@@ -23,7 +24,7 @@ public enum TrackingModes {
         MANUAL.config.add(null);
         CIRCLE_TRACKING.config.add(new CircleDetector());
         OBSTACLE_DETECTION.config.add(new ObstacleDetector());
-        LINE_DETECTION.config.add(new LineDetector());
+        LINE_DETECTION.config.add(new YetAnotherLineDetector());
     }
 
     static{

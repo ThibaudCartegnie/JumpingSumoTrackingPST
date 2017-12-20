@@ -70,7 +70,7 @@ public class LineDetector implements Detector{
         //Log.d(TAG, "high_thresh: " + high_thresh);
         Imgproc.Canny(mThresholded,mThresholded,50,150);
 
-        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 10, 0, 10);//Finds lines in a gray scale
+        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 75, 0, 10);//Finds lines in a gray scale
         //Imgproc.HoughLines(mThresholded, lines, 1, Math.PI /180,200);
 
         theta = .0f;
@@ -89,8 +89,8 @@ public class LineDetector implements Detector{
             p1=new Point(vec[0],vec[1]);
             p2=new Point(vec[2],vec[3]);
             Point P = new Point(p2.x - p1.x, p2.y - p1.y);
-            //if ((a.x-width_tolerance< p1.x)&&(p1.x < a.x+width_tolerance)&&(a.x-width_tolerance < p2.x)&&(p2.x < a.x+width_tolerance)
-            //        &&(p2.y>a.y-height_tolerance)&&(p1.y>a.y-height_tolerance)) {
+//            if ((a.x-width_tolerance< p1.x)&&(p1.x < a.x+width_tolerance)&&(a.x-width_tolerance < p2.x)&&(p2.x < a.x+width_tolerance)
+//                    &&(p2.y>a.y-height_tolerance)&&(p1.y>a.y-height_tolerance)) {
 
             if(     (p1.x <= width/2 && p1.y >= 2*(a-height)*p1.x/width + height)
                     || (p1.x > width/2 && p1.y >= 2*(height-a)*p1.x/width + 2*a - height)
@@ -101,13 +101,13 @@ public class LineDetector implements Detector{
 
                 theta += Math.toDegrees(Math.atan2(P.y, P.x) - Math.atan2(AB.y, AB.x));
                 nb++;
-                Log.d(TAG, "theta :" + theta);
+
             }
             //Log.v(TAG, "i: "+ i+ "size:" + lines.size().height + ", w:"+lines.size().width+", cols: "+lines.cols() + ", rows: "+lines.rows());
             Imgproc.line(mRgb,p1,p2,new Scalar(0,0,255),1,Core.LINE_AA,0);
         }
-
         theta = nb == 0? Float.NaN : theta/nb;
+        Log.d(TAG, "theta :" + theta + " ,nb:"+nb);
 
         if(25 < theta && theta <= 180) {
             Log.d(TAG,"turned -5");
