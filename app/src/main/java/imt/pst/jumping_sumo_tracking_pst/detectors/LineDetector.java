@@ -24,7 +24,6 @@ public class LineDetector implements Detector{
     private JumpingSumo mJSDrone;
     private final String TAG = "RecogPath";
     private double theta = 0;
-    private Mat mThresholded2;
 
     public LineDetector(){
         this(640,480);
@@ -38,7 +37,6 @@ public class LineDetector implements Detector{
         array255 = new Mat(height, width, CvType.CV_8UC1);
         distance = new Mat(height, width, CvType.CV_8UC1);
         mThresholded = new Mat(height, width, CvType.CV_8UC1);
-        mThresholded2 = new Mat(height, width, CvType.CV_8UC1);
         template = new Mat(height,width,CvType.CV_8UC4); //draws a line to match the path to follow
         a = new Point(width/2,2*height/3);
         b = new Point(width/2, height);

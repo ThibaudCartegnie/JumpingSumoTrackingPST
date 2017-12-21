@@ -20,14 +20,14 @@ public enum TrackingModes {
     OBSTACLE_DETECTION(2, "Detection of obstacles", true),
     LINE_DETECTION(3, "Line Detection", false);
 
-    private static void modesSetup(){
+    private static void modesSetup() {
         MANUAL.config.add(null);
         CIRCLE_TRACKING.config.add(new CircleDetector());
         OBSTACLE_DETECTION.config.add(new ObstacleDetector());
         LINE_DETECTION.config.add(new YetAnotherLineDetector());
     }
 
-    static{
+    static {
         modesSetup();
     }
 
@@ -37,7 +37,7 @@ public enum TrackingModes {
 
     private boolean useCommands;
 
-    TrackingModes(int id, String textView, boolean useCommands){
+    TrackingModes(int id, String textView, boolean useCommands) {
         this.textView = textView;
         this.config = new ArrayList<>();
         this.id = id;
@@ -65,9 +65,9 @@ public enum TrackingModes {
         return this.textView;
     }
 
-    public static TrackingModes getTrackingModeById(int id){
-        for(TrackingModes mode : TrackingModes.values()){
-            if(mode.getId() == id){
+    public static TrackingModes getTrackingModeById(int id) {
+        for (TrackingModes mode : TrackingModes.values()) {
+            if (mode.getId() == id) {
                 return mode;
             }
         }

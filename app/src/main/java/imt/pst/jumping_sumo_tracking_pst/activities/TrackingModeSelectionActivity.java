@@ -46,13 +46,13 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(isDroneConnected){
+                if (isDroneConnected) {
                     ARDiscoveryDeviceService mDrone = mDronesList.get(0);
 
                     // Check if Drone is supported
                     ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(mDrone.getProductID());
                     if (product != ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_JS && product != ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_JS_EVO_LIGHT
-                            && product != ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_JS_EVO_RACE){
+                            && product != ARDISCOVERY_PRODUCT_ENUM.ARDISCOVERY_PRODUCT_JS_EVO_RACE) {
                         Log.e(TAG, "Drone not supported by this app.");
                         AlertDialog alertDialog = new AlertDialog.Builder(TrackingModeSelectionActivity.this).create();
                         alertDialog.setMessage("The connected drone is not supported by this app.");
@@ -68,7 +68,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
 
                     Intent mIntent = new Intent(TrackingModeSelectionActivity.this, DroneControlActivity.class);
                     mIntent.putExtra(EXTRA_DEVICE_SERVICE, mDronesList.get(0));
-                    mIntent.putExtra(EXTRA_TRACKING_CONFIG, ((TrackingModes)mAdapter.getItem(position)).getId());
+                    mIntent.putExtra(EXTRA_TRACKING_CONFIG, ((TrackingModes) mAdapter.getItem(position)).getId());
                     startActivity(mIntent);
                     onStop();
                 } else {
@@ -124,17 +124,17 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
         }
     };
 
-    private void checkDroneConnexion(){
-        if(mDronesList.size() == 0 && isDroneConnected){
+    private void checkDroneConnexion() {
+        if (mDronesList.size() == 0 && isDroneConnected) {
             isDroneConnected = false;
             droneDisconnected();
-        } else if (mDronesList.size() != 0){
+        } else if (mDronesList.size() != 0) {
             isDroneConnected = true;
             droneConnected(mDronesList.get(0).getName());
         }
     }
 
-    private void droneConnected(String drone_name){
+    private void droneConnected(String drone_name) {
         ProgressBar mProgressBar = findViewById(R.id.progressBar_waiting_drone);
         mProgressBar.setVisibility(View.GONE);
 
@@ -142,7 +142,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
         mTextView.setText(String.format(getString(R.string.drone_connected), drone_name));
     }
 
-    private void droneDisconnected(){
+    private void droneDisconnected() {
         ProgressBar mProgressBar = findViewById(R.id.progressBar_waiting_drone);
         mProgressBar.setVisibility(View.VISIBLE);
 

@@ -50,30 +50,29 @@ public class DroneControlActivity extends AppCompatActivity {
         mCommands[4] = findViewById(R.id.highJumpBt);
         mCommands[5] = findViewById(R.id.longJumpBt);
 
-        config = TrackingModes.getTrackingModeById(getIntent().getIntExtra(TrackingModeSelectionActivity.EXTRA_TRACKING_CONFIG,0));
+        config = TrackingModes.getTrackingModeById(getIntent().getIntExtra(TrackingModeSelectionActivity.EXTRA_TRACKING_CONFIG, 0));
         mDroneService = getIntent().getParcelableExtra(TrackingModeSelectionActivity.EXTRA_DEVICE_SERVICE);
 
         mDrone = new JumpingSumo(this, mDroneService);
         mDrone.addListener(mJSListener);
 
-        if(config.doesUseCommands()){
+        if (config.doesUseCommands()) {
             activateCommands();
         } else {
             deactivateCommands();
         }
 
-        for(Detector d : config.getConfig()){
-            if(d!= null){
+        for (Detector d : config.getConfig()) {
+            if (d != null) {
                 d.setDrone(mDrone);
             }
         }
     }
 
 
-
     @Override
-    public void onBackPressed(){
-        if(!mDrone.disconnect()){
+    public void onBackPressed() {
+        if (!mDrone.disconnect()) {
             finish();
         }
     }
@@ -99,12 +98,11 @@ public class DroneControlActivity extends AppCompatActivity {
         @Override
         public void onFrameReceived(ARFrame frame) {
             byte[] data = frame.getByteData();
-            //TODO: give frames to modules, print it
             currentFrame = BitmapFactory.decodeByteArray(data, 0, data.length);
             calculatedFrame = currentFrame.copy(currentFrame.getConfig(), currentFrame.isMutable());
 
-            for(Detector detector : config.getConfig()){
-                if(detector != null){
+            for (Detector detector : config.getConfig()) {
+                if (detector != null) {
                     calculatedFrame = detector.detect(currentFrame, new byte[5]);
                 }
             }
@@ -115,7 +113,7 @@ public class DroneControlActivity extends AppCompatActivity {
 
         @Override
         public void onBatteryChargeChanged(int batteryPercentage) {
-            ((TextView)findViewById(R.id.batteryLabel)).setText(String.format("%d%%", batteryPercentage));
+            ((TextView) findViewById(R.id.batteryLabel)).setText(String.format("%d%%", batteryPercentage));
         }
 
         @Override
@@ -159,8 +157,8 @@ public class DroneControlActivity extends AppCompatActivity {
         }
     };
 
-    private void activateCommands(){
-        for(Button b: mCommands){
+    private void activateCommands() {
+        for (Button b : mCommands) {
             b.setVisibility(View.VISIBLE);
         }
 
@@ -320,8 +318,8 @@ public class DroneControlActivity extends AppCompatActivity {
         });
     }
 
-    private void deactivateCommands(){
-        for(Button b: mCommands){
+    private void deactivateCommands() {
+        for (Button b : mCommands) {
             b.setVisibility(View.GONE);
         }
 

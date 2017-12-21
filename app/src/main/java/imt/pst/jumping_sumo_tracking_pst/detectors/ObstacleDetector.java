@@ -31,7 +31,6 @@ public class ObstacleDetector implements Detector {
     private Mat mEdges;
     private Mat mGray_1;
     private Mat mGray_2;
-    private Mat array255;
     private Mat distance;
     private Mat mObstacleCircle;
     private int nb_tot_white;
@@ -49,7 +48,6 @@ public class ObstacleDetector implements Detector {
     public ObstacleDetector(int width, int height) {
         mRgb = new Mat(height, width, CvType.CV_8UC4);
         mEdges = new Mat(height, width, CvType.CV_8UC4);
-        array255 = new Mat(height, width, CvType.CV_8UC1);
         distance = new Mat(height, width, CvType.CV_8UC1);
         mGray_1 = new Mat(height, width, CvType.CV_8UC1);
         mGray_2 = new Mat(height, width, CvType.CV_8UC1);
@@ -71,8 +69,7 @@ public class ObstacleDetector implements Detector {
 
         Imgproc.cvtColor(mRgb,mGray_1,Imgproc.COLOR_RGB2GRAY);
         Imgproc.bilateralFilter(mGray_1, mGray_2, 9, 200, 200);
-        //Imgproc.bilateralFilter(mGray_2, mGray_1, 9, 200, 200);
-        //Imgproc.GaussianBlur(mGray, mGray, new Size(9,9),0,0); // Uses a Gaussian filter in the image
+
         double high_thresh = Imgproc.threshold(mGray_2, distance,0,255,Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
         double low_thresh = 0.2 * high_thresh;
 

@@ -19,8 +19,7 @@
         </activity>
         <activity
             android:name=".activities.DroneControlActivity"
-            android:screenOrientation="landscape"
-            />
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
