@@ -48,7 +48,7 @@ public class FrameByFrameImageView extends android.support.v7.widget.AppCompatIm
     }
 
     private void customInit() {
-        setScaleType(ImageView.ScaleType.CENTER_CROP);
+        //setScaleType(ImageView.ScaleType.);
     }
 
     /**
