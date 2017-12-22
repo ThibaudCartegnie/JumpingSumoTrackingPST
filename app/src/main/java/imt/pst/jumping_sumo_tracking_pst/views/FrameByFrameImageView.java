@@ -48,13 +48,13 @@ public class FrameByFrameImageView extends android.support.v7.widget.AppCompatIm
     }
 
     private void customInit() {
-        setScaleType(ImageView.ScaleType.CENTER_CROP);
+        setScaleType(ScaleType.FIT_CENTER);
     }
 
     /**
      * Converts a frame into Bitmap and display it
      *
-     * @param frame image you take from the camera
+     * @param bmp image you take from the camera
      */
     public void displayFrame(final Bitmap bmp) {
         /*byte[] data = frame.getByteData();

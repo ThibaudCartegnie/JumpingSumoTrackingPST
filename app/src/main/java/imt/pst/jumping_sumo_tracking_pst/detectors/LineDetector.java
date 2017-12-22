@@ -1,16 +1,24 @@
 package imt.pst.jumping_sumo_tracking_pst.detectors;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 import imt.pst.jumping_sumo_tracking_pst.drone.JumpingSumo;
 
@@ -40,8 +48,11 @@ public class LineDetector implements Detector{
         mThresholded = new Mat(height, width, CvType.CV_8UC1);
         mThresholded2 = new Mat(height, width, CvType.CV_8UC1);
         template = new Mat(height,width,CvType.CV_8UC4); //draws a line to match the path to follow
-        a = new Point(width/2,2*height/3);
-        b = new Point(width/2, height);
+        float margeX = 50,margeY=20;
+        a = new Point(width/2-margeX,height-margeY);
+        b = new Point(width/2+margeX, height);
+        Imgproc.rectangle(template,a,b, new Scalar(255,0,0),2);
+
         AB = new Point(b.x - a.x, b.y-a.y);
 
 
@@ -56,9 +67,26 @@ public class LineDetector implements Detector{
     public Bitmap detect(Bitmap bmp, byte[] out) {
         Mat lines = new Mat();
         Bitmap outBmp = bmp.copy(bmp.getConfig(),bmp.isMutable());
-
         Utils.bitmapToMat(bmp, mRgb);
-        float width_tolerance = 80.0f, height_tolerance = 260.0f;
+
+
+        Mat roi = new Mat(mRgb,new Rect(a,b));
+        Mat mono= new Mat(),blur= new Mat(),thresh = new Mat(),erode =new Mat(),dilateImg = new Mat(), erodeImg = new Mat(), dilate = new Mat(), notused = new Mat();
+        Imgproc.cvtColor(roi, mono, Imgproc.COLOR_RGB2GRAY,4);
+        Imgproc.GaussianBlur(mono, blur, new Size(9, 9), 2, 2);
+       //Imgproc.bilateralFilter(blur,blur,9,200,200);
+        Imgproc.threshold(blur, thresh, 0, 255, Imgproc.THRESH_BINARY_INV|Imgproc.THRESH_OTSU);
+        Imgproc.erode(thresh, erodeImg, erode);
+        Imgproc.dilate(erodeImg, dilateImg, dilate);
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(dilateImg, contours, notused, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        //double minMaxCx = ( 15> 0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY);
+        for (MatOfPoint cont : contours){
+
+        }
+        //Imgproc.drawContours(mRgb,contours,-1,new Scalar(255),3);
+
+/*        float width_tolerance = 80.0f, height_tolerance = 260.0f;
         float width=640, height=480, a=height*3/4;
         //Core.inRange(mRgb,new Scalar(0,0,0), new Scalar(20,20,20), mThresholded2);
         Imgproc.cvtColor(mRgb, mGray, Imgproc.COLOR_RGB2GRAY, 4);
@@ -70,7 +98,7 @@ public class LineDetector implements Detector{
         //Log.d(TAG, "high_thresh: " + high_thresh);
         Imgproc.Canny(mThresholded,mThresholded,50,150);
 
-        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 10, 0, 10);//Finds lines in a gray scale
+        Imgproc.HoughLinesP(mThresholded, lines, 1, Math.PI / 180, 75, 0, 10);//Finds lines in a gray scale
         //Imgproc.HoughLines(mThresholded, lines, 1, Math.PI /180,200);
 
         theta = .0f;
@@ -130,8 +158,8 @@ public class LineDetector implements Detector{
             mJSDrone.setTurn(JumpingSumo.NO_TURN);
             mJSDrone.setFlag(JumpingSumo.FLAG_DO_NOT_RUN);
         }
-
-        Imgproc.line(template,new Point(320,height_tolerance),b,new Scalar(255),(int)(2*width_tolerance),8,0);
+*/
+        //Imgproc.line(template,new Point(320,height_tolerance),b,new Scalar(255),(int)(2*width_tolerance),8,0);
         Core.add(mRgb,template,mRgb);
 
         Utils.matToBitmap(mRgb, outBmp);
