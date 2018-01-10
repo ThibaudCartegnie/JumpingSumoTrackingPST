@@ -48,13 +48,13 @@ public class FrameByFrameImageView extends android.support.v7.widget.AppCompatIm
     }
 
     private void customInit() {
-        //setScaleType(ImageView.ScaleType.);
+        //setScaleType(ScaleType.FIT_XY);
     }
 
     /**
      * Converts a frame into Bitmap and display it
      *
-     * @param frame image you take from the camera
+     * @param bmp image you take from the camera
      */
     public void displayFrame(final Bitmap bmp) {
         /*byte[] data = frame.getByteData();
@@ -62,6 +62,7 @@ public class FrameByFrameImageView extends android.support.v7.widget.AppCompatIm
             mBmp = BitmapFactory.decodeByteArray(data, 0, data.length);
         }*/
 
+        // It is unclear why but it works way better with the 'synchronized (this)'
         mHandler.post(new Runnable() {
             @Override
             public void run() {

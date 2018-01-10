@@ -35,8 +35,6 @@ public class ObstacleDetector implements Detector {
     private Mat mObstacleCircle;
     private int nb_tot_white;
 
-    private float THRESHHOLD_OBSTACLE_DETECTION = 0.4f;
-
     private JumpingSumo mDrone = null;
 
     private String TAG = "OBSTACLES";
@@ -73,19 +71,23 @@ public class ObstacleDetector implements Detector {
         double high_thresh = Imgproc.threshold(mGray_2, distance,0,255,Imgproc.THRESH_BINARY | Imgproc.THRESH_OTSU);
         double low_thresh = 0.2 * high_thresh;
 
+        // Calculate the canny edges
         Imgproc.Canny(mGray_2, mGray_2, low_thresh, high_thresh);
 
+        // See the edges which are in the ellipse in front of the drone
         Core.bitwise_and(mGray_2, mObstacleCircle, mGray_1);
+
+        // Calculate the ratio
         int nb_px_obstacle = Core.countNonZero(mGray_1);
         float ratio = 100*((float)nb_px_obstacle/(float)(nb_tot_white==0? 1:nb_tot_white));
         Log.d(TAG, "nb px blanc tot: " + nb_tot_white + "; nb px comptés: " + nb_px_obstacle);
         Log.d(TAG, "ratio : " + ratio +"%");
 
-
+        // Calculate drone actiob
         avoid(ratio);
 
 
-        //affichage des arrêtes
+        // print it on image
         mEdges.setTo(new Scalar(0));
         mEdges.setTo(new Scalar(0,255,0), mGray_2);
         Core.add(mRgb, mEdges, mRgb);
@@ -108,7 +110,8 @@ public class ObstacleDetector implements Detector {
             return;
         }
 
-        if(ratio > THRESHHOLD_OBSTACLE_DETECTION && System.currentTimeMillis() - lastAvoid > 3000.0d){
+        // The threshhold of 0.4 is very experimental
+        if(ratio > 0.4f && System.currentTimeMillis() - lastAvoid > 3000.0d){
             Log.v(TAG, "Obstacle detected");
             mDrone.setJump(JumpingSumo.LONG_JUMP);
             mDrone.setFlag(JumpingSumo.FLAG_RUN);

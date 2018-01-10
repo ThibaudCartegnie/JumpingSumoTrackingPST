@@ -41,6 +41,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
 
         ListView mList = findViewById(R.id.listView_mainmenu);
 
+        // Create the list of modes
         final ListAdapter mAdapter = new ArrayAdapter<TrackingModes>(this, android.R.layout.simple_list_item_1, TrackingModes.values());
         mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,6 +67,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
                         return;
                     }
 
+                    // Launching the droneControlActivity
                     Intent mIntent = new Intent(TrackingModeSelectionActivity.this, DroneControlActivity.class);
                     mIntent.putExtra(EXTRA_DEVICE_SERVICE, mDronesList.get(0));
                     mIntent.putExtra(EXTRA_TRACKING_CONFIG, ((TrackingModes) mAdapter.getItem(position)).getId());
@@ -85,6 +87,7 @@ public class TrackingModeSelectionActivity extends AppCompatActivity {
             }
         });
 
+        // Lauching the discoverer
         mDroneDiscoverer = new JumpingDiscoverer(this);
         mDroneDiscoverer.setup();
         mDroneDiscoverer.addListener(mDiscovererListener);

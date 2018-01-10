@@ -2,13 +2,18 @@
 
 PST 2017, Tracking system using an Android App and a Parrot drone Jumping Sumo
 
+## Documentation
+
+* [PDF report (in French)](rapport.pdf)
+* [Javadoc](Javadoc/index.html)
+
 ## Supported Android versions
 
 * Android 4.4 (Kitkat) and above
 
 ## Build instruction
 
-Built with Android Studio 3.0.
+Built with Android Studio 3.0
 
 * Clone the repository `git clone https://github.com/Natu181/JumpingSumoTrackingPST.git`
 * Open the project with Android Studio

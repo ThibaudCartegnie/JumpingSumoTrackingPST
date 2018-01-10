@@ -15,7 +15,7 @@ public interface Detector {
      * the required actions on the drone
      *
      * @param originalFrame image passed by the drone camera
-     * @param outputData    unused byte array
+     * @param outputData    unused byte array, I imagined it as a way to communicate between detectors
      * @return a modified Bitmap image, this SHOULD be a different
      */
     public Bitmap detect(Bitmap originalFrame, byte[] outputData);
